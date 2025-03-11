@@ -1,5 +1,12 @@
+import fs from "fs";
+
 const create = async () => {
-    // Write your code here 
+    if (!fs.existsSync('files/fresh.txt')) {
+        fs.writeFileSync("files/fresh.txt", "I am fresh and young")
+    }
+    else {
+        console.error("FS operation failed")
+    }
 };
 
 await create();
