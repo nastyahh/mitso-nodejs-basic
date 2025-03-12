@@ -1,11 +1,15 @@
-import fs from "fs";
+import fs from "fs/promises";
 
 const create = async () => {
-    if (!fs.existsSync('files/fresh.txt')) {
-        fs.writeFileSync("files/fresh.txt", "I am fresh and young")
-    }
-    else {
-        console.error("FS operation failed")
+    try {
+        await fs.access("files/fresh.txt");
+        throw new Error("FS operation failed");
+    } catch (error) {
+        if (error.code === "ENOENT") {
+            await fs.writeFile("files/fresh.txt", "I am fresh and young");
+        } else {
+            throw error;
+        }
     }
 };
 
