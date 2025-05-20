@@ -1,15 +1,21 @@
-import fs from "fs/promises";
+import { writeFile, mkdir } from 'fs/promises';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const create = async () => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const filePath = join(__dirname, 'files', 'fresh.txt');
+    const content = 'I am fresh and young';
+
     try {
-        await fs.access("files/fresh.txt");
-        throw new Error("FS operation failed");
+        await mkdir(dirname(filePath), { recursive: true });
+        await writeFile(filePath, content, { flag: 'wx' });
     } catch (error) {
-        if (error.code === "ENOENT") {
-            await fs.writeFile("files/fresh.txt", "I am fresh and young");
-        } else {
-            throw error;
+        if (error.code === 'EEXIST') {
+            throw new Error('FS operation failed');
         }
+        throw error;
     }
 };
 
